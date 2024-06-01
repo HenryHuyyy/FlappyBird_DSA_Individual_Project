@@ -19,7 +19,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener {
     Image topPipeImg;
     Image bottomPipeImg;
 
-    //Define bird position ?
+    //Define bird size
     int birdX = boardWidth/8;
     int birdY = boardHeight/2;
     int birdWidth = 34;
@@ -67,6 +67,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener {
     int velocityX = -4;
     int velocityY = 0;
     int gravity = 1;
+    Sound sound = new Sound();
 
     ArrayList<Pipe> pipes;
     Random rand = new Random();
@@ -109,6 +110,8 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener {
         // Game timer
         gameLoop = new Timer(1000/60, this);
         gameLoop.start();
+
+        playMusic(0);
     }
 
     public void placePipes() {
@@ -116,7 +119,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener {
         // 128
         // 0 - 128 - (0 - 256) --> pipeHeight/4 -> 3/4 pipeHeight
         int randomPipeY = (int) (pipeY - pipeHeight/4 - Math.random()*(pipeHeight/2));
-        int openingSpace = boardWidth/4;
+        int openingSpace = boardHeight/4;
         Pipe topPipe = new Pipe(topPipeImg);
         topPipe.y = randomPipeY;
         pipes.add(topPipe);
@@ -128,27 +131,6 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener {
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
             draw(g);
-        }
-
-        public void move() {
-            //bird
-            velocityY += gravity;
-            bird.y += velocityY;
-            bird.y = Math.max(bird.y, 0);
-
-            //pipes
-            for (int i = 0; i < pipes.size(); i++) {
-                Pipe pipe = pipes.get(i);
-                pipe.x += velocityX;
-
-                if (collision(bird,pipe)) {
-                    gameOver = true;
-                }
-            }
-
-            if (bird.y > boardHeight) {
-                gameOver = true;
-            }
         }
 
         public void draw(Graphics g) {
@@ -164,12 +146,67 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener {
                 Pipe pipe = pipes.get(i);
                 g.drawImage(pipe.img, pipe.x, pipe.y, pipe.width,pipe.height,null);
             }
+
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("Arial", Font.PLAIN, 32));
+
+            if (gameOver) {
+                g.drawString("Game over " + String.valueOf((int) score), 10,35);
+            }
+            else {
+                g.drawString(String.valueOf((int) score),10,35);
+            }
+
         }
+
+    public void move() {
+        //bird
+        velocityY += gravity;
+        bird.y += velocityY;
+        bird.y = Math.max(bird.y, 0);
+
+        //pipes
+        for (int i = 0; i < pipes.size(); i++) {
+            Pipe pipe = pipes.get(i);
+            pipe.x += velocityX;
+
+            if (!pipe.passed && bird.x > pipe.x + pipe.width) {
+                pipe.passed = true;
+                score += 0.5; //because there are 2 pipes! Hence, 0.5*2 = 1, 1 for each set of pipes
+                playSoundEffect(3);
+            }
+
+            if (collision(bird,pipe)) {
+                gameOver = true;
+                playSoundEffect(5);
+            }
+        }
+
+        if (bird.y > boardHeight) {
+            gameOver = true;
+            playSoundEffect(5);
+        }
+    }
     public boolean collision(Bird a, Pipe b) {
-        return a.x < b.width &&                 // a's top left corner doesn't reach b's top right corner
+        return a.x < b.x + b.width &&                 // a's top left corner doesn't reach b's top right corner
                 a.x + a.width > b.x &&          // a's top right corner passes b's top left corner
                 a.y < b.y + b.height &&         // a's top left corner doesn't reach b's bottom left corner
                 a.y + a.height > b.y;           // a's bottom left corner passes b's top left corner
+    }
+
+    public void playMusic(int i) {
+        sound.setFile(i);
+        sound.play();
+        sound.loop();
+    }
+
+    public void stopMusic() {
+        sound.stop();
+    }
+
+    public void playSoundEffect(int i) {
+        sound.setFile(i);
+        sound.play();
     }
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -191,7 +228,19 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener {
     public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_SPACE) {
             velocityY = -9;
+            playSoundEffect(2);
+            if (gameOver) {
+                //restart the game by resetting condition
+                bird.y = birdY;
+                velocityY = 0;
+                pipes.clear();
+                score = 0;
+                gameOver = false;
+                gameLoop.start();
+                placePipesTimer.start();
+            }
         }
+
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
