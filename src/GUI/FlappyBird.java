@@ -11,6 +11,8 @@ import javax.swing.*;
 import javax.swing.Timer;
 
 public class FlappyBird extends JPanel implements ActionListener, KeyListener {
+
+    // Declare main gameplay window size
     int boardWidth = 360;
     int boardHeight = 640;
     JLabel scoreLabel;
@@ -31,7 +33,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener {
     int birdWidth = 34;
     int birdHeight = 24;
 
-    // Inner class Bird
+    // Declare inner class Bird
     public class Bird {
         int x = birdX;
         int y = birdY;
@@ -87,7 +89,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener {
     ScoreManager scoreManager;
     String currentPlayer = "Player1"; // This could be set dynamically
 
-    //Define main FlappyBird constructor
+    // Declare main FlappyBird constructor
     public FlappyBird(int boardWidth, int boardHeight) {
         setPreferredSize(new Dimension(boardWidth, boardHeight));
         setBackground(Color.BLUE);
@@ -133,14 +135,21 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener {
     // Method to place couples of top-pipes - bottom-pipes continuously
     public void placePipes() {
         int randomPipeY = (int) (pipeY - pipeHeight / 4 - Math.random() * (pipeHeight / 2));
-        int openingSpace = boardHeight / 4;
+        int openingSpace = boardHeight / 4; //Default value of openingSpace between pipes
+
+        // Condition for increasing difficulty if player's score > 15, which will decrease the value of openingSpace
+        // between pipes.
+
         if (score > 15) {
             openingSpace = boardHeight / 5;
         }
+
+        // Draw the top-pipe image
         Pipe topPipe = new Pipe(topPipeImg);
         topPipe.y = randomPipeY;
         pipes.add(topPipe);
 
+        // Draw the bottom-pipe image
         Pipe bottomPipe = new Pipe(bottomPipeImg);
         bottomPipe.y = topPipe.y + pipeHeight + openingSpace;
         pipes.add(bottomPipe);
@@ -177,7 +186,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener {
 
     // Movement logic and score increment
     public void move() {
-        //bird
+        // Bird movement
         if (falling || gameOver) {
             velocityY += gravity;
             bird.y += velocityY;
@@ -188,15 +197,14 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener {
             bird.y = Math.max(bird.y, 0);
         }
 
-        //pipes
-        for (int i = 0; i < pipes.size(); i++) {
-            Pipe pipe = pipes.get(i);
+        // pipes movement
+        for (Pipe pipe : pipes) {
             pipe.x += velocityX;
 
             if (!pipe.passed && bird.x > pipe.x + pipe.width) {
                 pipe.passed = true;
-                score += 0.5; //because there are 2 pipes! Hence, 0.5*2 = 1, 1 for each set of pipes
-                playSoundEffect(3);
+                score += 0.5; // because there are 2 pipes. Hence, 0.5*2 = 1, 1 for each set of pipes
+                playSoundEffect(3); // call the sound effect if the player get one more scores.
             }
 
             if (!falling && collision(bird, pipe)) {
@@ -213,7 +221,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener {
         }
     } //------- end of move() ---------//
 
-    //Method to check coordinate when the bird collides the pipe
+    //Method for collision detection
     public boolean collision(Bird a, Pipe b) {
         return a.x < b.x + b.width &&                 // a's top left corner doesn't reach b's top right corner
                 a.x + a.width > b.x &&          // a's top right corner passes b's top left corner

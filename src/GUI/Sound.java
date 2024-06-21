@@ -15,7 +15,7 @@ public class Sound {
     Clip clip;
     URL[] soundURL = new URL[30];
 
-    // Import sound files using constructor
+    // Declare Sound constructor for importing sound files
     public Sound() {
         soundURL[0] = getClass().getResource("/music/FlappyBird.wav");
         soundURL[1] = getClass().getResource("/sound/die.wav");
@@ -25,6 +25,7 @@ public class Sound {
         soundURL[5] = getClass().getResource("/sound/hit.wav");
     }
 
+    // Setter method
     public void setFile(int i) {
         try {
             AudioInputStream ais = AudioSystem.getAudioInputStream(soundURL[i]);

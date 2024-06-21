@@ -8,8 +8,12 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public class Menu extends JPanel implements MouseListener, MouseMotionListener {
+
+    // Define Menu window size
     private int boardWidth = 360;
     private int boardHeight = 640;
+
+
     private Image backgroundImg;
     private Image startButtonImg;
     Sound sound = new Sound();
@@ -20,6 +24,7 @@ public class Menu extends JPanel implements MouseListener, MouseMotionListener {
     private int play, exit, state;
     private Rectangle area, area2;
 
+    // Declare Menu constructor
     public Menu(Rectangle area, Rectangle area2, JFrame jFrame) {
         addMouseListener(this);
         addMouseMotionListener(this);
@@ -37,7 +42,8 @@ public class Menu extends JPanel implements MouseListener, MouseMotionListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+    } //--------- end of Menu constructor ----------//
+
     public void playMusic(int i) {
         sound.setFile(i);
         sound.play();
@@ -45,7 +51,7 @@ public class Menu extends JPanel implements MouseListener, MouseMotionListener {
     }
     public void startGame() {
         frame.getContentPane().removeAll();
-        FlappyBird gamePanel = new FlappyBird(boardWidth, boardHeight);
+        FlappyBird gamePanel = new FlappyBird(boardWidth, boardHeight); // Declare FlappyBird class object to start playing
         frame.add(gamePanel);
         frame.revalidate();
         frame.repaint();
@@ -108,10 +114,10 @@ public class Menu extends JPanel implements MouseListener, MouseMotionListener {
             g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
         }
         if (state == play) {
-            g.drawImage(playImage, 0, 0, getWidth(), getHeight(), this);
+            g.drawImage(playImage, 0, 0, getWidth(), getHeight(), this); // Confirm pressing Start button
         }
         if (state == exit) {
-            g.drawImage(exitImage, 0, 0, getWidth(), getHeight(), this);
+            g.drawImage(exitImage, 0, 0, getWidth(), getHeight(), this); // Confirm pressing Exit button
         }
     }
 }

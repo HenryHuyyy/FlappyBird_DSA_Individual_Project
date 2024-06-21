@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 
 public class Restart extends JFrame {
+
+    // Restart constructor
     public Restart() {
 // Create the GameOver panel
         GameOver panel = new GameOver(this);
