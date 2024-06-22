@@ -76,7 +76,8 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener {
 
     Sound sound = new Sound(); // Call the class Sound to add sound & music to the game
 
-    LinkedList<Pipe> pipes; // Declare Data Structure "Linked List" for generating pipes
+    LinkedList<Pipe> pipes = new LinkedList<Pipe>(); // Declare Data Structure "Linked List" for generating pipes
+
     Random rand = new Random();
 
     Timer gameLoop;
@@ -97,6 +98,8 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener {
         addKeyListener(this);
         requestFocus();
 
+        pipes = new LinkedList<Pipe>(); // Declare Data Structure "Linked List" for generating pipes
+
         // Initialize ScoreManager
         scoreManager = new ScoreManager();
 
@@ -111,7 +114,7 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener {
         // Load bird as main character
         bird = new Bird(birdImg);
 
-        pipes = new LinkedList<Pipe>();
+
 
         //Place pipe timer
         placePipesTimer = new Timer(1500, new ActionListener() {
@@ -139,11 +142,9 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener {
 
         // Condition for increasing difficulty if player's score > 15, which will decrease the value of openingSpace
         // between pipes.
-
         if (score > 15) {
             openingSpace = boardHeight / 5;
         }
-
         // Draw the top-pipe image
         Pipe topPipe = new Pipe(topPipeImg);
         topPipe.y = randomPipeY;
@@ -327,7 +328,6 @@ public class FlappyBird extends JPanel implements ActionListener, KeyListener {
         score = 0;
         placePipesTimer.start();
         gameLoop.start();
-        playMusic(0);
     } // end of restartGame()
 
 } // end of class FlappyBird
